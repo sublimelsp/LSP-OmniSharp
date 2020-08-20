@@ -1,5 +1,9 @@
 # LSP-OmniSharp
 
+```
+NOTE: Still a bit broken on st4000-exploration branch. Work in progress!
+```
+
 This is a helper package that automatically installs and updates
 [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn) for you.
 
