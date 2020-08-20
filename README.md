@@ -28,7 +28,7 @@ case, that means that when you open a view with the `source.cs` base scope, inst
 
 ## Configuration
 
-Configure the OmniSharp by accessing `Preferences > Package Settings > LSP > Servers > LSP-OmniSharp`.
+Configure OmniSharp by accessing `Preferences > Package Settings > LSP > Servers > LSP-OmniSharp`.
 
 ## Quirks
 
