@@ -1,0 +1,12 @@
+{
+	"version": "1.37.0",
+	"languages": [
+		{
+			"languageId": "csharp",
+			"document_selector": "source.cs"
+		},
+		{
+			"languageId": "cake"
+		}
+	],
+}

@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "Preferences: LSP-OmniSharp Settings",
+        "command": "edit_settings",
+        "args": {
+            "base_file": "${packages}/LSP-OmniSharp/LSP-OmniSharp.sublime-settings",
+            "default": "// Settings in here override those in \"LSP-OmniSharp/LSP-OmniSharp.sublime-settings\"\n{\n\t$0\n}\n"
+        }
+    }
+]
