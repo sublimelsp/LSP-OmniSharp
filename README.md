@@ -20,8 +20,7 @@ This language server operates on views with the `source.cs` base scope.
 
 The server is installed in the $DATA/Cache/LSP-OmniSharp directory, where $DATA is the base data path of Sublime Text.
 For instance, $DATA is `~/.config/sublime-text` on a Linux system. If you want to force a re-installation of the server,
-you can delete the entire $DATA/Cache/LSP-OmniSharp directory. The installation is done through a virtual environment,
-using pip. Therefore, you must have at least the `python` executable installed and it must be present in your $PATH.
+you can delete the entire $DATA/Cache/LSP-OmniSharp directory.
 
 Like any helper package, installation starts when you open a view that is suitable for this language server. In this
 case, that means that when you open a view with the `source.cs` base scope, installation commences.
