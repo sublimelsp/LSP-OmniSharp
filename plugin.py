@@ -104,3 +104,15 @@ class OmniSharp(AbstractPlugin):
             shutil.rmtree(temp_unpacked_location, ignore_errors=True)
             shutil.rmtree(zipfile, ignore_errors=True)
             raise
+
+    # notification handlers
+
+    def m_o__MsBuildProjectDiagnostics(self, params: Any) -> None:
+        session = self.weaksession()
+        if session:
+            session.window.status_message("Compiled {}".format(params["FileName"]))
+
+    def m_o__ProjectConfiguration(self, params: Any) -> None:
+        session = self.weaksession()
+        if session:
+            session.window.status_message("Project configured")

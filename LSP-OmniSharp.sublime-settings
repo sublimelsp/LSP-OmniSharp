@@ -1,12 +1,135 @@
 {
-	"version": "1.37.0",
-	"languages": [
-		{
-			"languageId": "csharp",
-			"document_selector": "source.cs"
-		},
-		{
-			"languageId": "cake"
-		}
-	],
+    "version": "1.37.0",
+    "languages": [
+        {
+            "languageId": "csharp",
+            "document_selector": "source.cs"
+        },
+        {
+            "languageId": "cake"
+        }
+    ],
+    "settings": {
+        // Enable/disable default C# formatter (requires restart).
+        "csharp.format.enable": true,
+        // Specifies the maximum number of files for which diagnostics are reported
+        // for the whole workspace. If this limit is exceeded, diagnostics will be
+        // shown for currently opened files only. Specify 0 or less to disable the
+        // limit completely.
+        "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
+        // Specifies whether the references CodeLens should be shown.
+        "csharp.referencesCodeLens.enabled": true,
+        // Enable/disable Semantic Highlighting for C# files (Razor files currently
+        // unsupported). Defaults to false. Close open files for changes to take
+        // effect.
+        "csharp.semanticHighlighting.enabled": false,
+        // Suppress the notification window to add missing assets to build or debug
+        // the application.
+        "csharp.suppressBuildAssetsNotification": false,
+        // Suppress the warning that the .NET Core SDK is not on the path.
+        "csharp.suppressDotnetInstallWarning": false,
+        // Suppress the notification window to perform a 'dotnet restore' when
+        // dependencies can't be resolved.
+        "csharp.suppressDotnetRestoreNotification": false,
+        // Suppress 'hidden' diagnostics (such as 'unnecessary using directives')
+        // from appearing in the editor or the Problems pane.
+        "csharp.suppressHiddenDiagnostics": true,
+        // Suppress the warning that project.json is no longer a supported project
+        // format for .NET Core applications
+        "csharp.suppressProjectJsonWarning": false,
+        // Specifies whether the run and debug test CodeLens should be shown.
+        "csharp.testsCodeLens.enabled": true,
+        // Options to use with the debugger when launching for unit test debugging.
+        // Any launch.json option is valid here.
+        "csharp.unitTestDebuggingOptions": {},
+        // Specifies whether the OmniSharp server will be automatically started or
+        // not. If false, OmniSharp can be started with the 'Restart OmniSharp'
+        // command
+        "omnisharp.autoStart": true,
+        // The name of the default solution used at start up if the repo has
+        // multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null`
+        // which will cause the first in alphabetical order to be chosen.
+        "omnisharp.defaultLaunchSolution": null,
+        // Specifies whether notifications should be shown if OmniSharp encounters
+        // warnings or errors loading a project. Note that these warnings/errors are
+        // always emitted to the OmniSharp log
+        "omnisharp.disableMSBuildDiagnosticWarning": false,
+        // Enables support for decompiling external references instead of viewing
+        // metadata.
+        "omnisharp.enableDecompilationSupport": false,
+        // Enables support for reading code style, naming convention and analyzer
+        // settings from .editorconfig.
+        "omnisharp.enableEditorConfigSupport": false,
+        // Enables support for showing unimported types and unimported extension
+        // methods in completion lists. When committed, the appropriate using
+        // directive will be added at the top of the current file. This option can
+        // have a negative impact on initial completion responsiveness, particularly
+        // for the first few completion sessions after opening a solution.
+        "omnisharp.enableImportCompletion": false,
+        // If true, MSBuild project system will only load projects for files that
+        // were opened in the editor. This setting is useful for big C# codebases
+        // and allows for faster initialization of code navigation features only for
+        // projects that are relevant to code that is being edited. With this
+        // setting enabled OmniSharp may load fewer projects and may thus display
+        // incomplete reference lists for symbols.
+        "omnisharp.enableMsBuildLoadProjectsOnDemand": false,
+        // Enables support for roslyn analyzers, code fixes and rulesets.
+        "omnisharp.enableRoslynAnalyzers": false,
+        // Specifies the level of logging output from the OmniSharp server.
+        // possible values: trace, debug, information, warning, error, critical
+        "omnisharp.loggingLevel": "information",
+        // The maximum number of items that 'Go to Symbol in Workspace' operation
+        // can show. The limit is applied only when a positive number is specified
+        // here.
+        "omnisharp.maxFindSymbolsItems": 1000,
+        // The maximum number of projects to be shown in the 'Select Project'
+        // dropdown (maximum 250).
+        "omnisharp.maxProjectResults": 250,
+        // The minimum number of characters to enter before 'Go to Symbol in
+        // Workspace' operation shows any results.
+        "omnisharp.minFindSymbolsFilterLength": 0,
+        // Specifies the path to a mono installation to use when "useGlobalMono" is
+        // set to "always" or "auto", instead of the default system one.
+        "omnisharp.monoPath": null,
+        // Specifies the path to OmniSharp. When left empty the OmniSharp version
+        // pinned to the C# Extension is used. This can be the absolute path to an
+        // OmniSharp executable, a specific version number, or "latest". If a
+        // version number or "latest" is specified, the appropriate version of
+        // OmniSharp will be downloaded on your behalf. Setting "latest" is an opt-
+        // in into latest beta releases of OmniSharp.
+        "omnisharp.path": null,
+        // The time Visual Studio Code will wait for the OmniSharp server to start.
+        // Time is expressed in seconds.
+        "omnisharp.projectLoadTimeout": 60,
+        // Specifes whether OmniSharp should use VS Code editor settings for C# code
+        // formatting (use of tabs, indentation size).
+        "omnisharp.useEditorFormattingSettings": true,
+        // Launch OmniSharp with the globally-installed Mono. If set to "always",
+        // "mono" version 6.4.0 or greater must be available on the PATH. If set to
+        // "auto", OmniSharp will be launched with "mono" if version 6.4.0 or
+        // greater is available on the PATH.
+        // possible values: auto, always, never
+        "omnisharp.useGlobalMono": "auto",
+        // Pass the --debug flag when launching the OmniSharp server to allow a
+        // debugger to be attached.
+        "omnisharp.waitForDebugger": false,
+        // Forces the omnisharp-vscode extension to run in a mode that enables local
+        // Razor.VSCode deving.
+        "razor.devmode": false,
+        // Specifies whether to disable Razor language features.
+        "razor.disabled": false,
+        // Enable/disable default Razor formatter.
+        "razor.format.enable": true,
+        // Specifies whether to wait for debug attach when launching the language
+        // server.
+        "razor.languageServer.debug": false,
+        // Overrides the path to the Razor Language Server directory.
+        "razor.languageServer.directory": null,
+        // Overrides the path to the Razor plugin dll.
+        "razor.plugin.path": null,
+        // Specifies whether to output all messages [Verbose], some messages
+        // [Messages] or not at all [Off].
+        // possible values: Off, Messages, Verbose
+        "razor.trace": "Off",
+    }
 }
