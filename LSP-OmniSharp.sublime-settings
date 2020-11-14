@@ -1,14 +1,6 @@
 {
     "version": "1.37.0",
-    "languages": [
-        {
-            "languageId": "csharp",
-            "document_selector": "source.cs"
-        },
-        {
-            "languageId": "cake"
-        }
-    ],
+    "selector": "source.cs | source.cake",
     "settings": {
         // Enable/disable default C# formatter (requires restart).
         "csharp.format.enable": true,
@@ -38,14 +30,7 @@
         // format for .NET Core applications
         "csharp.suppressProjectJsonWarning": false,
         // Specifies whether the run and debug test CodeLens should be shown.
-        "csharp.testsCodeLens.enabled": true,
-        // Options to use with the debugger when launching for unit test debugging.
-        // Any launch.json option is valid here.
-        "csharp.unitTestDebuggingOptions": {},
-        // Specifies whether the OmniSharp server will be automatically started or
-        // not. If false, OmniSharp can be started with the 'Restart OmniSharp'
-        // command
-        "omnisharp.autoStart": true,
+        "csharp.testsCodeLens.enabled": false,
         // The name of the default solution used at start up if the repo has
         // multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null`
         // which will cause the first in alphabetical order to be chosen.
@@ -78,30 +63,17 @@
         // Specifies the level of logging output from the OmniSharp server.
         // possible values: trace, debug, information, warning, error, critical
         "omnisharp.loggingLevel": "information",
-        // The maximum number of items that 'Go to Symbol in Workspace' operation
+        // The maximum number of items that 'Go to Symbol in Project' operation
         // can show. The limit is applied only when a positive number is specified
         // here.
         "omnisharp.maxFindSymbolsItems": 1000,
-        // The maximum number of projects to be shown in the 'Select Project'
-        // dropdown (maximum 250).
-        "omnisharp.maxProjectResults": 250,
         // The minimum number of characters to enter before 'Go to Symbol in
-        // Workspace' operation shows any results.
+        // Project' operation shows any results.
         "omnisharp.minFindSymbolsFilterLength": 0,
-        // Specifies the path to a mono installation to use when "useGlobalMono" is
-        // set to "always" or "auto", instead of the default system one.
-        "omnisharp.monoPath": null,
-        // Specifies the path to OmniSharp. When left empty the OmniSharp version
-        // pinned to the C# Extension is used. This can be the absolute path to an
-        // OmniSharp executable, a specific version number, or "latest". If a
-        // version number or "latest" is specified, the appropriate version of
-        // OmniSharp will be downloaded on your behalf. Setting "latest" is an opt-
-        // in into latest beta releases of OmniSharp.
-        "omnisharp.path": null,
-        // The time Visual Studio Code will wait for the OmniSharp server to start.
+        // The time LSP will wait for the OmniSharp server to start.
         // Time is expressed in seconds.
         "omnisharp.projectLoadTimeout": 60,
-        // Specifes whether OmniSharp should use VS Code editor settings for C# code
+        // Specifes whether OmniSharp should use Sublime Text settings for C# code
         // formatting (use of tabs, indentation size).
         "omnisharp.useEditorFormattingSettings": true,
         // Launch OmniSharp with the globally-installed Mono. If set to "always",
