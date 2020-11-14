@@ -6,6 +6,8 @@ import subprocess
 import tempfile
 
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import register_plugin
+from LSP.plugin import unregister_plugin
 from LSP.plugin.core.typing import Any, Dict, Optional, Tuple, List
 import sublime
 from sublime import version
@@ -54,7 +56,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def basedir(cls) -> str:
-        return os.path.join(sublime.cache_path(), "LSP-{}".format(cls.name()))
+        return os.path.join(cls.storage_path(), "LSP-{}".format(cls.name()))
 
     @classmethod
     def binary_path(cls) -> str:
@@ -107,12 +109,47 @@ class OmniSharp(AbstractPlugin):
 
     # notification handlers
 
-    def m_o__MsBuildProjectDiagnostics(self, params: Any) -> None:
+    def _print(self, sticky: bool, fmt: str, *args: Any) -> None:
         session = self.weaksession()
         if session:
-            session.window.status_message("Compiled {}".format(params["FileName"]))
+            message = fmt.format(*args)
+            if sticky:
+                session.set_status_message_async(self.name(), message)
+            else:
+                session.erase_status_message_async(self.name())
+                session.window.status_message(message)
+
+    def m_o__MsBuildProjectDiagnostics(self, params: Any) -> None:
+        self._print(True, "Compiled {}", params["FileName"])
 
     def m_o__ProjectConfiguration(self, params: Any) -> None:
-        session = self.weaksession()
-        if session:
-            session.window.status_message("Project configured")
+        self._print(False, "Project configured")
+
+    def m_o__UnresolvedDependencies(self, params: Any) -> None:
+        self._print(False, "{} has unresolved dependencies", params["FileName"])
+
+    def _get_assembly_name(self, params: Any) -> Optional[str]:
+        project = params.get("MsBuildProject")
+        if project:
+            assembly_name = project.get("AssemblyName")
+            if isinstance(assembly_name, str):
+                return assembly_name
+        return None
+
+    def m_o__ProjectAdded(self, params: Any) -> None:
+        assembly_name = self._get_assembly_name(params)
+        if assembly_name:
+            self._print(False, "Project added: {}", assembly_name)
+
+    def m_o__ProjectChanged(self, params: Any) -> None:
+        assembly_name = self._get_assembly_name(params)
+        if assembly_name:
+            self._print(False, "Project changed: {}", assembly_name)
+
+
+def plugin_loaded() -> None:
+    register_plugin(OmniSharp)
+
+
+def plugin_unloaded() -> None:
+    unregister_plugin(OmniSharp)
