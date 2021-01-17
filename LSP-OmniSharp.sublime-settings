@@ -76,9 +76,6 @@
         // Specifes whether OmniSharp should use Sublime Text settings for C# code
         // formatting (use of tabs, indentation size).
         "omnisharp.useEditorFormattingSettings": true,
-        // Pass the --debug flag when launching the OmniSharp server to allow a
-        // debugger to be attached.
-        "omnisharp.waitForDebugger": false,
         // Forces the omnisharp-vscode extension to run in a mode that enables local
         // Razor.VSCode deving.
         "razor.devmode": false,
