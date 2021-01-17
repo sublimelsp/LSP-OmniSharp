@@ -8,7 +8,7 @@
         // for the whole workspace. If this limit is exceeded, diagnostics will be
         // shown for currently opened files only. Specify 0 or less to disable the
         // limit completely.
-        "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
+        "csharp.maxProjectFileCountForDiagnosticAnalysis": 1,
         // Specifies whether the references CodeLens should be shown.
         "csharp.referencesCodeLens.enabled": true,
         // Enable/disable Semantic Highlighting for C# files (Razor files currently
