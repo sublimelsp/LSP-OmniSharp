@@ -70,26 +70,13 @@
         // The minimum number of characters to enter before 'Go to Symbol in
         // Project' operation shows any results.
         "omnisharp.minFindSymbolsFilterLength": 0,
-        // The time LSP will wait for the OmniSharp server to start.
-        // Time is expressed in seconds.
-        "omnisharp.projectLoadTimeout": 60,
         // Specifes whether OmniSharp should use Sublime Text settings for C# code
         // formatting (use of tabs, indentation size).
         "omnisharp.useEditorFormattingSettings": true,
-        // Forces the omnisharp-vscode extension to run in a mode that enables local
-        // Razor.VSCode deving.
-        "razor.devmode": false,
         // Specifies whether to disable Razor language features.
         "razor.disabled": false,
         // Enable/disable default Razor formatter.
         "razor.format.enable": true,
-        // Specifies whether to wait for debug attach when launching the language
-        // server.
-        "razor.languageServer.debug": false,
-        // Overrides the path to the Razor Language Server directory.
-        "razor.languageServer.directory": null,
-        // Overrides the path to the Razor plugin dll.
-        "razor.plugin.path": null,
         // Specifies whether to output all messages [Verbose], some messages
         // [Messages] or not at all [Off].
         // possible values: Off, Messages, Verbose
