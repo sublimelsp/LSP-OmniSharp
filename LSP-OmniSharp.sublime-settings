@@ -76,12 +76,6 @@
         // Specifes whether OmniSharp should use Sublime Text settings for C# code
         // formatting (use of tabs, indentation size).
         "omnisharp.useEditorFormattingSettings": true,
-        // Launch OmniSharp with the globally-installed Mono. If set to "always",
-        // "mono" version 6.4.0 or greater must be available on the PATH. If set to
-        // "auto", OmniSharp will be launched with "mono" if version 6.4.0 or
-        // greater is available on the PATH.
-        // possible values: auto, always, never
-        "omnisharp.useGlobalMono": "auto",
         // Pass the --debug flag when launching the OmniSharp server to allow a
         // debugger to be attached.
         "omnisharp.waitForDebugger": false,
