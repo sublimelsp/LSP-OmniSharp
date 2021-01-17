@@ -10,7 +10,7 @@
         // limit completely.
         "csharp.maxProjectFileCountForDiagnosticAnalysis": 1,
         // Specifies whether the references CodeLens should be shown.
-        "csharp.referencesCodeLens.enabled": true,
+        "csharp.referencesCodeLens.enabled": false,
         // Enable/disable Semantic Highlighting for C# files (Razor files currently
         // unsupported). Defaults to false. Close open files for changes to take
         // effect.
