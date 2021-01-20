@@ -1,6 +1,10 @@
 {
     "version": "1.37.5",
     "selector": "source.cs | source.cake",
+    "env": {
+        // TODO: Is this necessary on Windows/Linux?
+        "FrameworkPathOverride": "${storage_path}/LSP-OmniSharp/.msbuild/Current"
+    },
     "settings": {
         // Enable/disable default C# formatter (requires restart).
         "csharp.format.enable": true,

@@ -4,8 +4,9 @@ This is a helper package that automatically installs and updates
 [OmniSharp](https://github.com/OmniSharp/omnisharp-roslyn) for you.
 
 To use this package, you must have:
+
 - The [LSP](https://packagecontrol.io/packages/LSP) package.
-- The [.NET Core SDK](https://dotnet.microsoft.com/download).
+- The [.NET SDK](https://dotnet.microsoft.com/download). (The "Core" version **does not work on macOS**.)
 - For macOS and Linux, [Mono](https://www.mono-project.com/) in order to be able to run the executable.
 
 ## Applicable Selectors
