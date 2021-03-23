@@ -1,5 +1,5 @@
 {
-    "version": "1.37.5",
+    "version": "1.37.7",
     "selector": "source.cs | source.cake",
     "env": {
         // TODO: Is this necessary on Windows/Linux?
