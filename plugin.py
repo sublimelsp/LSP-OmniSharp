@@ -68,7 +68,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_windows_command(cls) -> List[str]:
-        return [cls.binary_path(), "--languageserver", "--verbose"]
+        return [cls.binary_path(), "--languageserver"]
 
     @classmethod
     def get_osx_command(cls) -> List[str]:
