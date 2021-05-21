@@ -90,14 +90,14 @@ class OmniSharp(AbstractPlugin):
     @classmethod
     def install_or_update(cls) -> None:
         shutil.rmtree(cls.basedir(), ignore_errors=True)
-        temp_unpacked_location = os.path.join(sublime.cache_path(), "omnisharp")
-        zipfile = os.path.join(sublime.cache_path(), "{}.zip".format(cls.name()))
+        temp_unpacked_location = os.path.join(cls.storage_path(), "omnisharp")
+        zipfile = os.path.join(cls.storage_path(), "{}.zip".format(cls.name()))
         try:
             version = cls.version_str()
             urlretrieve(URL.format(version, _platform_str()), zipfile)
             with ZipFile(zipfile, "r") as f:
-                f.extractall(sublime.cache_path())
-            os.rename(os.path.join(sublime.cache_path(), "omnisharp"), cls.basedir())
+                f.extractall(cls.storage_path())
+            os.rename(os.path.join(cls.storage_path(), "omnisharp"), cls.basedir())
             os.unlink(zipfile)
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
