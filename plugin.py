@@ -2,15 +2,12 @@ from urllib.request import urlretrieve
 from zipfile import ZipFile
 import os
 import shutil
-import subprocess
-import tempfile
 
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.typing import Any, Dict, Optional, Tuple, List
 import sublime
-from sublime import version
 
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
 
@@ -60,7 +57,10 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def binary_path(cls) -> str:
-        return os.path.join(cls.basedir(), "OmniSharp.exe")
+        if sublime.platform() == "windows":
+            return os.path.join(cls.basedir(), "OmniSharp.exe")
+        else:
+            return os.path.join(cls.basedir(), "omnisharp", "OmniSharp.exe")
 
     @classmethod
     def get_command(cls) -> List[str]:
@@ -91,21 +91,17 @@ class OmniSharp(AbstractPlugin):
     def install_or_update(cls) -> None:
         shutil.rmtree(cls.basedir(), ignore_errors=True)
         os.makedirs(cls.basedir(), exist_ok=True)
-        temp_unpacked_location = os.path.join(cls.storage_path(), "omnisharp")
-        zipfile = os.path.join(cls.storage_path(), "{}.zip".format(cls.name()))
+        zipfile = os.path.join(cls.basedir(), "omnisharp.zip")
         try:
             version = cls.version_str()
             urlretrieve(URL.format(version, _platform_str()), zipfile)
             with ZipFile(zipfile, "r") as f:
-                f.extractall(cls.storage_path())
-            os.rename(os.path.join(cls.storage_path(), "omnisharp"), cls.basedir())
+                f.extractall(cls.basedir())
             os.unlink(zipfile)
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
-            shutil.rmtree(temp_unpacked_location, ignore_errors=True)
-            shutil.rmtree(zipfile, ignore_errors=True)
             raise
 
     # notification handlers
