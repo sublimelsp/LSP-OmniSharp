@@ -2,37 +2,61 @@
   "contributions": {
     "settings": [
       {
+        "file_patterns": [
+          "/LSP-OmniSharp.sublime-settings"
+        ],
         "schema": {
           "$id": "sublime://settings/LSP-OmniSharp",
+          "allOf": [
+            {
+              "$ref": "sublime://settings/LSP-plugin-base"
+            },
+            {
+              "$ref": "sublime://settings/LSP-OmniSharp#/definitions/PluginConfig"
+            }
+          ],
           "definitions": {
             "PluginConfig": {
               "properties": {
                 "settings": {
                   "additionalProperties": false,
                   "properties": {
-                    "csharp.referencesCodeLens.enabled": {
+                    "csharp.format.enable": {
                       "default": true,
-                      "description": "Specifies whether the references CodeLens should be shown.",
+                      "description": "Enable/disable default C# formatter (requires restart).",
                       "type": "boolean"
-                    },
-                    "omnisharp.enableEditorConfigSupport": {
-                      "default": true,
-                      "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig.",
-                      "type": "boolean"
-                    },
-                    "omnisharp.defaultLaunchSolution": {
-                      "default": null,
-                      "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen.",
-                      "type": "string"
                     },
                     "csharp.maxProjectFileCountForDiagnosticAnalysis": {
                       "default": 1000,
                       "description": "Specifies the maximum number of files for which diagnostics are reported for the whole workspace. If this limit is exceeded, diagnostics will be shown for currently opened files only. Specify 0 or less to disable the limit completely.",
                       "type": "number"
                     },
-                    "omnisharp.useEditorFormattingSettings": {
+                    "csharp.referencesCodeLens.enabled": {
                       "default": true,
-                      "description": "Specifes whether OmniSharp should use VS Code editor settings for C# code formatting (use of tabs, indentation size).",
+                      "description": "Specifies whether the references CodeLens should be shown.",
+                      "type": "boolean"
+                    },
+                    "csharp.referencesCodeLens.filteredSymbols": {
+                      "default": [],
+                      "description": "Array of custom symbol names for which CodeLens should be disabled.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    "csharp.semanticHighlighting.enabled": {
+                      "default": false,
+                      "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+                      "type": "boolean"
+                    },
+                    "csharp.suppressHiddenDiagnostics": {
+                      "default": true,
+                      "description": "Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in the editor or the Problems pane.",
+                      "type": "boolean"
+                    },
+                    "csharp.suppressProjectJsonWarning": {
+                      "default": false,
+                      "description": "Suppress the warning that project.json is no longer a supported project format for .NET Core applications",
                       "type": "boolean"
                     },
                     "csharp.testsCodeLens.enabled": {
@@ -40,27 +64,14 @@
                       "description": "Specifies whether the run and debug test CodeLens should be shown.",
                       "type": "boolean"
                     },
-                    "razor.disabled": {
-                      "default": false,
-                      "description": "Specifies whether to disable Razor language features.",
-                      "type": "boolean"
+                    "omnisharp.defaultLaunchSolution": {
+                      "default": null,
+                      "description": "The name of the default solution used at start up if the repo has multiple solutions. e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in alphabetical order to be chosen.",
+                      "type": "string"
                     },
-                    "csharp.referencesCodeLens.filteredSymbols": {
-                      "default": [],
-                      "items": {
-                        "type": "string"
-                      },
-                      "type": "array",
-                      "description": "Array of custom symbol names for which CodeLens should be disabled."
-                    },
-                    "omnisharp.enableRoslynAnalyzers": {
+                    "omnisharp.enableAsyncCompletion": {
                       "default": false,
-                      "description": "Enables support for roslyn analyzers, code fixes and rulesets.",
-                      "type": "boolean"
-                    },
-                    "omnisharp.enableImportCompletion": {
-                      "default": false,
-                      "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file. This option can have a negative impact on initial completion responsiveness, particularly for the first few completion sessions after opening a solution.",
+                      "description": "(EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can speed up time to show the completion list, particularly override and partial method completion lists, at the cost of slight delays after inserting a completion item. Most completion items will have no noticeable impact with this feature, but typing immediately after inserting an override or partial method completion, before the insert is completed, can have unpredictable results.",
                       "type": "boolean"
                     },
                     "omnisharp.enableDecompilationSupport": {
@@ -68,23 +79,29 @@
                       "description": "Enables support for decompiling external references instead of viewing metadata.",
                       "type": "boolean"
                     },
+                    "omnisharp.enableEditorConfigSupport": {
+                      "default": true,
+                      "description": "Enables support for reading code style, naming convention and analyzer settings from .editorconfig.",
+                      "type": "boolean"
+                    },
+                    "omnisharp.enableImportCompletion": {
+                      "default": false,
+                      "description": "Enables support for showing unimported types and unimported extension methods in completion lists. When committed, the appropriate using directive will be added at the top of the current file. This option can have a negative impact on initial completion responsiveness, particularly for the first few completion sessions after opening a solution.",
+                      "type": "boolean"
+                    },
                     "omnisharp.enableMsBuildLoadProjectsOnDemand": {
                       "default": false,
                       "description": "If true, MSBuild project system will only load projects for files that were opened in the editor. This setting is useful for big C# codebases and allows for faster initialization of code navigation features only for projects that are relevant to code that is being edited. With this setting enabled OmniSharp may load fewer projects and may thus display incomplete reference lists for symbols.",
                       "type": "boolean"
                     },
-                    "razor.format.enable": {
-                      "default": true,
-                      "description": "Enable/disable default Razor formatter.",
+                    "omnisharp.enableRoslynAnalyzers": {
+                      "default": false,
+                      "description": "Enables support for roslyn analyzers, code fixes and rulesets.",
                       "type": "boolean"
-                    },
-                    "omnisharp.maxFindSymbolsItems": {
-                      "default": 1000,
-                      "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here.",
-                      "type": "number"
                     },
                     "omnisharp.loggingLevel": {
                       "default": "information",
+                      "description": "Specifies the level of logging output from the OmniSharp server.",
                       "enum": [
                         "trace",
                         "debug",
@@ -93,63 +110,49 @@
                         "error",
                         "critical"
                       ],
-                      "description": "Specifies the level of logging output from the OmniSharp server.",
                       "type": "string"
                     },
-                    "csharp.format.enable": {
-                      "default": true,
-                      "description": "Enable/disable default C# formatter (requires restart).",
-                      "type": "boolean"
+                    "omnisharp.maxFindSymbolsItems": {
+                      "default": 1000,
+                      "description": "The maximum number of items that 'Go to Symbol in Workspace' operation can show. The limit is applied only when a positive number is specified here.",
+                      "type": "number"
                     },
-                    "razor.trace": {
-                      "default": "Off",
-                      "enum": [
-                        "Off",
-                        "Messages",
-                        "Verbose"
-                      ],
-                      "enumDescriptions": [
-                        "Does not log messages from the Razor extension",
-                        "Logs only some messages from the Razor extension",
-                        "Logs all messages from the Razor extension"
-                      ],
-                      "description": "Specifies whether to output all messages [Verbose], some messages [Messages] or not at all [Off].",
-                      "type": "string"
+                    "omnisharp.maxProjectResults": {
+                      "default": 250,
+                      "description": "The maximum number of projects to be shown in the 'Select Project' dropdown (maximum 250).",
+                      "type": "number"
+                    },
+                    "omnisharp.minFindSymbolsFilterLength": {
+                      "default": 0,
+                      "description": "The minimum number of characters to enter before 'Go to Symbol in Workspace' operation shows any results.",
+                      "type": "number"
                     },
                     "omnisharp.organizeImportsOnFormat": {
                       "default": false,
                       "description": "Specifies whether 'using' directives should be grouped and sorted during document formatting.",
                       "type": "boolean"
                     },
-                    "omnisharp.disableMSBuildDiagnosticWarning": {
-                      "default": false,
-                      "description": "Specifies whether notifications should be shown if OmniSharp encounters warnings or errors loading a project. Note that these warnings/errors are always emitted to the OmniSharp log",
+                    "omnisharp.useEditorFormattingSettings": {
+                      "default": true,
+                      "description": "Specifes whether OmniSharp should use Sublime Text editor settings for C# code formatting (use of tabs, indentation size).",
                       "type": "boolean"
                     },
-                    "csharp.semanticHighlighting.enabled": {
-                      "default": false,
-                      "description": "Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported). Defaults to false. Close open files for changes to take effect.",
+                    "razor.format.enable": {
+                      "default": true,
+                      "description": "Enable/disable default Razor formatter.",
                       "type": "boolean"
                     }
                   }
                 }
               }
             }
-          },
-          "allOf": [
-            {
-              "$ref": "sublime://settings/LSP-plugin-base"
-            },
-            {
-              "$ref": "sublime://settings/LSP-OmniSharp#/definitions/PluginConfig"
-            }
-          ]
-        },
-        "file_patterns": [
-          "/LSP-OmniSharp.sublime-settings"
-        ]
+          }
+        }
       },
       {
+        "file_patterns": [
+          "/*.sublime-project"
+        ],
         "schema": {
           "properties": {
             "settings": {
@@ -164,10 +167,7 @@
               }
             }
           }
-        },
-        "file_patterns": [
-          "/*.sublime-project"
-        ]
+        }
       }
     ]
   }
