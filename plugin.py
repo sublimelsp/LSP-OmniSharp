@@ -6,9 +6,10 @@ import shutil
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.typing import Any, Dict, Optional, Tuple, List
+from LSP.plugin.core.typing import Any, Optional, Tuple, List
 import sublime
 
+VERSION = "1.37.11"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
 
 
@@ -41,8 +42,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def version_str(cls) -> str:
-        settings = sublime.load_settings("LSP-{}.sublime-settings".format(cls.name()))
-        return str(settings.get("version"))
+        return VERSION
 
     @classmethod
     def installed_version_str(cls) -> str:
