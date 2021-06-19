@@ -6,6 +6,7 @@ import shutil
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
+from LSP.plugin.core.protocol import Range
 from LSP.plugin.core.typing import Any, Optional, Tuple, List, Mapping, Callable  # noqa: E501
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
@@ -149,10 +150,11 @@ class OmniSharp(AbstractPlugin):
         for sv in sb.session_views:
             if not sv.view.is_valid():
                 continue
-            region = range_to_region(arguments[0]["range"], sv.view)
+            r = Range.from_lsp(arguments[0]["range"])
+            region = range_to_region(r, sv.view)
             args = {"point": region.a}
             session.window.run_command("lsp_symbol_references", args)
-            done_callback()
+            sublime.set_timeout_async(done_callback)
             return True
         return False
 
