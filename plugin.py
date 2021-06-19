@@ -11,6 +11,7 @@ from LSP.plugin import ClientConfig
 from LSP.plugin.core.typing import Any, Optional, List
 import sublime
 
+VERSION = "1.37.11"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
@@ -43,7 +44,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def version_str(cls) -> str:
-        return str(cls.get_settings().get("version"))
+        return VERSION
 
     @classmethod
     def installed_version_str(cls) -> str:
@@ -80,8 +81,21 @@ class OmniSharp(AbstractPlugin):
         return cls.get_linux_command()
 
     @classmethod
+    def mono_bin_path(cls) -> str:
+        return os.path.join(cls.basedir(), "bin", "mono")
+
+    @classmethod
+    def mono_config_path(cls) -> str:
+        return os.path.join(cls.basedir(), "etc", "config")
+
+    @classmethod
     def get_linux_command(cls) -> List[str]:
-        return ["mono"] + cls.get_windows_command()
+        return [
+            cls.mono_bin_path(),
+            "--assembly-loader=strict",
+            "--config",
+            cls.mono_config_path()
+        ] + cls.get_windows_command()
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -103,6 +117,8 @@ class OmniSharp(AbstractPlugin):
             with ZipFile(zipfile, "r") as f:
                 f.extractall(cls.basedir())
             os.unlink(zipfile)
+            if sublime.platform() != "windows":
+                os.chmod(cls.mono_bin_path(), 0o744)
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
         except Exception:
