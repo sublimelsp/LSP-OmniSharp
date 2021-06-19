@@ -6,11 +6,13 @@ import shutil
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.typing import Any, Optional, Tuple, List
+from LSP.plugin import WorkspaceFolder
+from LSP.plugin import ClientConfig
+from LSP.plugin.core.typing import Any, Optional, List
 import sublime
 
 VERSION = "1.37.11"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
 def _platform_str() -> str:
@@ -35,10 +37,10 @@ class OmniSharp(AbstractPlugin):
         return cls.__name__
 
     @classmethod
-    def configuration(cls) -> Tuple[sublime.Settings, str]:
-        settings, filename = super().configuration()
-        settings.set("command", cls.get_command())
-        return settings, filename
+    def get_settings(cls) -> sublime.Settings:
+        return sublime.load_settings(
+            "LSP-{}.sublime-settings".format(cls.name())
+        )
 
     @classmethod
     def version_str(cls) -> str:
@@ -64,6 +66,10 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_command(cls) -> List[str]:
+        settings = cls.get_settings()
+        cmd = settings.get("command")
+        if isinstance(cmd, list):
+            return cmd
         return getattr(cls, "get_{}_command".format(sublime.platform()))()
 
     @classmethod
@@ -118,6 +124,17 @@ class OmniSharp(AbstractPlugin):
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise
+
+    @classmethod
+    def on_pre_start(
+        cls,
+        window: sublime.Window,
+        initiating_view: sublime.View,
+        workspace_folders: List[WorkspaceFolder],
+        configuration: ClientConfig
+    ) -> Optional[str]:
+        configuration.command = cls.get_command()
+        return None
 
     # notification handlers
 
