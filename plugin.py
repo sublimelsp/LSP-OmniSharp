@@ -75,8 +75,21 @@ class OmniSharp(AbstractPlugin):
         return cls.get_linux_command()
 
     @classmethod
+    def mono_bin_path(cls) -> str:
+        return os.path.join(cls.basedir(), "bin", "mono")
+
+    @classmethod
+    def mono_config_path(cls) -> str:
+        return os.path.join(cls.basedir(), "etc", "config")
+
+    @classmethod
     def get_linux_command(cls) -> List[str]:
-        return ["mono"] + cls.get_windows_command()
+        return [
+            cls.mono_bin_path(),
+            "--assembly-loader=strict",
+            "--config",
+            cls.mono_config_path()
+        ] + cls.get_windows_command()
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -98,6 +111,8 @@ class OmniSharp(AbstractPlugin):
             with ZipFile(zipfile, "r") as f:
                 f.extractall(cls.basedir())
             os.unlink(zipfile)
+            if sublime.platform() != "windows":
+                os.chmod(cls.mono_bin_path(), 0o744)
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
         except Exception:
