@@ -6,11 +6,12 @@ import shutil
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin.core.typing import Any, Optional, Tuple, List
+from LSP.plugin.core.typing import Any, Optional, Tuple, List, Mapping, Callable  # noqa: E501
+from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
 VERSION = "1.37.11"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
 def _platform_str() -> str:
@@ -119,7 +120,43 @@ class OmniSharp(AbstractPlugin):
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise
 
-    # notification handlers
+    # -- commands from the server that should be handled client-side ----------
+
+    def on_pre_server_command(
+        self,
+        command: Mapping[str, Any],
+        done_callback: Callable[[], None]
+    ) -> bool:
+        name = command["command"]
+        if name == "omnisharp/client/findReferences":
+            return self._handle_quick_references(
+                command["arguments"],
+                done_callback
+            )
+        return False
+
+    def _handle_quick_references(
+        self,
+        arguments: List[Any],
+        done_callback: Callable[[], None]
+    ) -> bool:
+        session = self.weaksession()
+        if not session:
+            return False
+        sb = session.get_session_buffer_for_uri_async(arguments[0]["uri"])
+        if not sb:
+            return False
+        for sv in sb.session_views:
+            if not sv.view.is_valid():
+                continue
+            region = range_to_region(arguments[0]["range"], sv.view)
+            args = {"point": region.a}
+            session.window.run_command("lsp_symbol_references", args)
+            done_callback()
+            return True
+        return False
+
+    # --- custom notification handlers ----------------------------------------
 
     def _print(self, sticky: bool, fmt: str, *args: Any) -> None:
         session = self.weaksession()
