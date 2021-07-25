@@ -4,10 +4,12 @@ import os
 import shutil
 
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import ClientConfig
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
+from LSP.plugin import WorkspaceFolder
 from LSP.plugin.core.protocol import Range
-from LSP.plugin.core.typing import Any, Optional, Tuple, List, Mapping, Callable  # noqa: E501
+from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
@@ -37,10 +39,10 @@ class OmniSharp(AbstractPlugin):
         return cls.__name__
 
     @classmethod
-    def configuration(cls) -> Tuple[sublime.Settings, str]:
-        settings, filename = super().configuration()
-        settings.set("command", cls.get_command())
-        return settings, filename
+    def get_settings(cls) -> sublime.Settings:
+        return sublime.load_settings(
+            "LSP-{}.sublime-settings".format(cls.name())
+        )
 
     @classmethod
     def version_str(cls) -> str:
@@ -66,6 +68,10 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_command(cls) -> List[str]:
+        settings = cls.get_settings()
+        cmd = settings.get("command")
+        if isinstance(cmd, list):
+            return cmd
         return getattr(cls, "get_{}_command".format(sublime.platform()))()
 
     @classmethod
@@ -120,6 +126,17 @@ class OmniSharp(AbstractPlugin):
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise
+
+    @classmethod
+    def on_pre_start(
+        cls,
+        window: sublime.Window,
+        initiating_view: sublime.View,
+        workspace_folders: List[WorkspaceFolder],
+        configuration: ClientConfig
+    ) -> Optional[str]:
+        configuration.command = cls.get_command()
+        return None
 
     # -- commands from the server that should be handled client-side ----------
 
