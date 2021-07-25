@@ -146,7 +146,7 @@ class OmniSharp(AbstractPlugin):
             r = Range.from_lsp(arguments[0]["range"])
             region = range_to_region(r, sv.view)
             args = {"point": region.a}
-            session.window.run_command("lsp_symbol_references", args)
+            sv.view.run_command("lsp_symbol_references", args)
             sublime.set_timeout_async(done_callback)
             return True
         return False
