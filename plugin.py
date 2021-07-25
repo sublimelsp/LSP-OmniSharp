@@ -11,7 +11,7 @@ from LSP.plugin import ClientConfig
 from LSP.plugin.core.typing import Any, Optional, List
 import sublime
 
-VERSION = "1.37.11"
+VERSION = "1.37.13"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
@@ -143,18 +143,18 @@ class OmniSharp(AbstractPlugin):
         if session:
             message = fmt.format(*args)
             if sticky:
-                session.set_status_message_async(self.name(), message)
+                session.set_window_status_async(self.name(), message)
             else:
-                session.erase_status_message_async(self.name())
+                session.erase_window_status_async(self.name())
                 session.window.status_message(message)
 
-    def m_o__MsBuildProjectDiagnostics(self, params: Any) -> None:
+    def m_o__msbuildprojectdiagnostics(self, params: Any) -> None:
         self._print(True, "Compiled {}", params["FileName"])
 
-    def m_o__ProjectConfiguration(self, params: Any) -> None:
+    def m_o__projectconfiguration(self, params: Any) -> None:
         self._print(False, "Project configured")
 
-    def m_o__UnresolvedDependencies(self, params: Any) -> None:
+    def m_o__unresolveddependencies(self, params: Any) -> None:
         self._print(False, "{} has unresolved dependencies", params["FileName"])
 
     def _get_assembly_name(self, params: Any) -> Optional[str]:
@@ -165,12 +165,12 @@ class OmniSharp(AbstractPlugin):
                 return assembly_name
         return None
 
-    def m_o__ProjectAdded(self, params: Any) -> None:
+    def m_o__projectadded(self, params: Any) -> None:
         assembly_name = self._get_assembly_name(params)
         if assembly_name:
             self._print(False, "Project added: {}", assembly_name)
 
-    def m_o__ProjectChanged(self, params: Any) -> None:
+    def m_o__projectchanged(self, params: Any) -> None:
         assembly_name = self._get_assembly_name(params)
         if assembly_name:
             self._print(False, "Project changed: {}", assembly_name)
