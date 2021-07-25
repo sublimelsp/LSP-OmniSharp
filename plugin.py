@@ -130,17 +130,10 @@ class OmniSharp(AbstractPlugin):
     ) -> bool:
         name = command["command"]
         if name == "omnisharp/client/findReferences":
-            return self._handle_quick_references(
-                command["arguments"],
-                done_callback
-            )
+            return self._handle_quick_references(command["arguments"], done_callback)
         return False
 
-    def _handle_quick_references(
-        self,
-        arguments: List[Any],
-        done_callback: Callable[[], None]
-    ) -> bool:
+    def _handle_quick_references(self, arguments: List[Any], done_callback: Callable[[], None]) -> bool:
         session = self.weaksession()
         if not session:
             return False
