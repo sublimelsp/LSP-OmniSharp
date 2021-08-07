@@ -4,11 +4,13 @@ import os
 import shutil
 
 from LSP.plugin import AbstractPlugin
+from LSP.plugin import ClientConfig
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin import WorkspaceFolder
-from LSP.plugin import ClientConfig
-from LSP.plugin.core.typing import Any, Optional, List
+from LSP.plugin.core.protocol import Range
+from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
+from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
 VERSION = "1.37.11"
@@ -136,7 +138,37 @@ class OmniSharp(AbstractPlugin):
         configuration.command = cls.get_command()
         return None
 
-    # notification handlers
+    # -- commands from the server that should be handled client-side ----------
+
+    def on_pre_server_command(
+        self,
+        command: Mapping[str, Any],
+        done_callback: Callable[[], None]
+    ) -> bool:
+        name = command["command"]
+        if name == "omnisharp/client/findReferences":
+            return self._handle_quick_references(command["arguments"], done_callback)
+        return False
+
+    def _handle_quick_references(self, arguments: List[Any], done_callback: Callable[[], None]) -> bool:
+        session = self.weaksession()
+        if not session:
+            return True
+        sb = session.get_session_buffer_for_uri_async(arguments[0]["uri"])
+        if not sb:
+            return True
+        for sv in sb.session_views:
+            if not sv.view.is_valid():
+                continue
+            r = Range.from_lsp(arguments[0]["range"])
+            region = range_to_region(r, sv.view)
+            args = {"point": region.a}
+            sv.view.run_command("lsp_symbol_references", args)
+            done_callback()
+            return True
+        return True
+
+    # --- custom notification handlers ----------------------------------------
 
     def _print(self, sticky: bool, fmt: str, *args: Any) -> None:
         session = self.weaksession()
