@@ -153,10 +153,10 @@ class OmniSharp(AbstractPlugin):
     def _handle_quick_references(self, arguments: List[Any], done_callback: Callable[[], None]) -> bool:
         session = self.weaksession()
         if not session:
-            return False
+            return True
         sb = session.get_session_buffer_for_uri_async(arguments[0]["uri"])
         if not sb:
-            return False
+            return True
         for sv in sb.session_views:
             if not sv.view.is_valid():
                 continue
@@ -166,7 +166,7 @@ class OmniSharp(AbstractPlugin):
             sv.view.run_command("lsp_symbol_references", args)
             done_callback()
             return True
-        return False
+        return True
 
     # --- custom notification handlers ----------------------------------------
 
