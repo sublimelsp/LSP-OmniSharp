@@ -16,14 +16,11 @@
         // Array of custom symbol names for which CodeLens should be disabled.
         "csharp.referencesCodeLens.filteredSymbols": [],
         // Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported).
-        // Defaults to false. Close open files for changes to take effect.
-        "csharp.semanticHighlighting.enabled": false,
+        // Defaults to true. Close open files for changes to take effect.
+        "csharp.semanticHighlighting.enabled": true,
         // Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in
         // the editor or the Problems pane.
         "csharp.suppressHiddenDiagnostics": true,
-        // Suppress the warning that project.json is no longer a supported project format for .NET
-        // Core applications
-        "csharp.suppressProjectJsonWarning": false,
         // Specifies whether the run and debug test CodeLens should be shown.
         "csharp.testsCodeLens.enabled": true,
         // The name of the default solution used at start up if the repo has multiple solutions.
