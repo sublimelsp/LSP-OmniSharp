@@ -25,6 +25,33 @@ case, that means that when you open a view with the `source.cs` base scope, inst
 
 Configure OmniSharp by running `Preferences: LSP-OmniSharp Settings` from the Command Palette.
 
+## Project Setting
+
+The server will automatically find the the solution file from the folder you have opened in Sublime. If you have multiple solutions, or your solution is in another folder, you have to specify the solution file you wish to use in a `sublime-project`. 
+
+1. Go to `File -> Open` and select the folder with your solution in it.
+
+2. Go to `Project -> Save Project As` and save a `YOURPROJECTNAME.sublime-project` in desired location.
+
+3. Open your `YOURPROJECTNAME.sublime-project` file that should now appear in the sidebar on the left
+
+4. Enter the location to the `*.sln` file like below
+
+```
+{
+    "folders":
+    [
+        {
+            "follow_symlinks": true,
+            "path": "."
+        }
+    ],
+    "solution_file": "./testconsoleprj.sln"
+}
+```
+
+Once the `YOURPROJECT.sublime-project` is set up and saved, the next time you open this project in sublime, OmniSharp will use the specified solution.
+
 ## Capabilities
 
 OmniSharp can do a lot of cool things, like
