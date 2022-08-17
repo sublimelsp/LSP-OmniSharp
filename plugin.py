@@ -67,6 +67,21 @@ class OmniSharp(AbstractPlugin):
             return os.path.join(cls.basedir(), "omnisharp", "OmniSharp.exe")
 
     @classmethod
+    def get_solution_arguments(cls) -> List[str]:
+        view = sublime.active_window().active_view()
+        project_file = view.window().project_file_name()
+
+        if project_file is not None:
+            data = view.window().project_data()
+            if 'solution_file' in data:
+                project_dir = os.path.dirname(project_file)
+                solution_file_name = data['solution_file']
+                solution_file_path = os.path.join(project_dir, solution_file_name)
+                return ["-s", os.path.abspath(solution_file_path)]
+
+        return []
+
+    @classmethod
     def get_command(cls) -> List[str]:
         settings = cls.get_settings()
         cmd = settings.get("command")
@@ -76,7 +91,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_windows_command(cls) -> List[str]:
-        return [cls.binary_path(), "--languageserver"]
+        return [cls.binary_path(), "--languageserver"] + cls.get_solution_arguments()
 
     @classmethod
     def get_osx_command(cls) -> List[str]:
