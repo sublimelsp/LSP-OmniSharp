@@ -37,6 +37,8 @@ The server will automatically find the the solution file from the folder you hav
 
 4. Enter the location to the `*.sln` file like below
 
+### Example sublime-project file
+
 ```
 {
     "folders":
