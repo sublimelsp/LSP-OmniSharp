@@ -8,7 +8,6 @@ from LSP.plugin import ClientConfig
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin import WorkspaceFolder
-from LSP.plugin.core.protocol import Range
 from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
@@ -160,8 +159,7 @@ class OmniSharp(AbstractPlugin):
         for sv in sb.session_views:
             if not sv.view.is_valid():
                 continue
-            r = Range.from_lsp(arguments[0]["range"])
-            region = range_to_region(r, sv.view)
+            region = range_to_region(arguments[0]["range"], sv.view)
             args = {"point": region.a}
             sv.view.run_command("lsp_symbol_references", args)
             done_callback()
