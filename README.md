@@ -7,6 +7,8 @@ To use this package, you must have:
 
 - The [LSP](https://packagecontrol.io/packages/LSP) package.
 - The [.NET SDK](https://dotnet.microsoft.com/download). (The "Core" version **does not work on macOS**.)
+- (Optional but recommended) Install the [LSP-file-watcher-chokidar](https://github.com/sublimelsp/LSP-file-watcher-chokidar) via Package Control to enable functionality to notify the server about new files.
+
 
 ## Applicable Selectors
 
