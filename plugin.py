@@ -12,8 +12,8 @@ from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
-VERSION = "1.38.2"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
+VERSION = "1.39.10"
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}-net6.0.zip"  # noqa: E501
 
 
 def _platform_str() -> str:
@@ -63,7 +63,7 @@ class OmniSharp(AbstractPlugin):
         if sublime.platform() == "windows":
             return os.path.join(cls.basedir(), "OmniSharp.exe")
         else:
-            return os.path.join(cls.basedir(), "omnisharp", "OmniSharp.exe")
+            return os.path.join(cls.basedir(), "OmniSharp")
 
     @classmethod
     def get_command(cls) -> List[str]:
@@ -71,32 +71,11 @@ class OmniSharp(AbstractPlugin):
         cmd = settings.get("command")
         if isinstance(cmd, list):
             return cmd
-        return getattr(cls, "get_{}_command".format(sublime.platform()))()
+        return cls.get_platform_command()
 
     @classmethod
-    def get_windows_command(cls) -> List[str]:
+    def get_platform_command(cls) -> List[str]:
         return [cls.binary_path(), "--languageserver"]
-
-    @classmethod
-    def get_osx_command(cls) -> List[str]:
-        return cls.get_linux_command()
-
-    @classmethod
-    def mono_bin_path(cls) -> str:
-        return os.path.join(cls.basedir(), "bin", "mono")
-
-    @classmethod
-    def mono_config_path(cls) -> str:
-        return os.path.join(cls.basedir(), "etc", "config")
-
-    @classmethod
-    def get_linux_command(cls) -> List[str]:
-        return [
-            cls.mono_bin_path(),
-            "--assembly-loader=strict",
-            "--config",
-            cls.mono_config_path()
-        ] + cls.get_windows_command()
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -111,7 +90,7 @@ class OmniSharp(AbstractPlugin):
     def install_or_update(cls) -> None:
         shutil.rmtree(cls.basedir(), ignore_errors=True)
         os.makedirs(cls.basedir(), exist_ok=True)
-        zipfile = os.path.join(cls.basedir(), "omnisharp.zip")
+        zipfile = os.path.join(cls.basedir(), "omnisharp-net6.0.zip")
         try:
             version = cls.version_str()
             urlretrieve(URL.format(version, _platform_str()), zipfile)
@@ -119,7 +98,7 @@ class OmniSharp(AbstractPlugin):
                 f.extractall(cls.basedir())
             os.unlink(zipfile)
             if sublime.platform() != "windows":
-                os.chmod(cls.mono_bin_path(), 0o744)
+                os.chmod(cls.binary_path(), 0o744)
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
         except Exception:
