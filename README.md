@@ -26,6 +26,7 @@ case, that means that when you open a view with the `source.cs` base scope, inst
 ## Configuration
 
 ~~Configure OmniSharp by running `Preferences: LSP-OmniSharp Settings` from the Command Palette.~~
+
 Create `omnisharp.json` in your project root. [reference link](https://github.com/OmniSharp/omnisharp-roslyn/wiki/Configuration-Options)
 
 ## Capabilities
