@@ -13,7 +13,7 @@ from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
 VERSION = "1.39.10"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}-net6.0.zip"  # noqa: E501
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
 def _platform_str() -> str:
@@ -56,7 +56,7 @@ class OmniSharp(AbstractPlugin):
         if sublime.platform() == "windows":
             return os.path.join(cls.basedir(), "OmniSharp.exe")
         else:
-            return os.path.join(cls.basedir(), "OmniSharp")
+            return os.path.join(cls.basedir(), "OmniSharp.dll")
 
     @classmethod
     def get_command(cls) -> List[str]:
@@ -68,7 +68,11 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_platform_command(cls) -> List[str]:
-        return [cls.binary_path(), "--languageserver"]
+        if sublime.platform() != "windows":
+            # Assuming dotnet is installed
+            return ["dotnet", cls.binary_path(), "--languageserver"]
+        else:
+            return [cls.binary_path(), "--languageserver"]
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -83,10 +87,14 @@ class OmniSharp(AbstractPlugin):
     def install_or_update(cls) -> None:
         shutil.rmtree(cls.basedir(), ignore_errors=True)
         os.makedirs(cls.basedir(), exist_ok=True)
-        zipfile = os.path.join(cls.basedir(), "omnisharp-net6.0.zip")
+        zipfile = os.path.join(cls.basedir(), "omnisharp.zip")
         try:
             version = cls.version_str()
-            urlretrieve(URL.format(version, _platform_str()), zipfile)
+            dl_platform = _platform_str()
+            # Switching to dotnet is a better option on platforms other than Windows
+            if sublime.platform() != "windows":
+                dl_platform = dl_platform + "-net6.0"
+            urlretrieve(URL.format(version, dl_platform), zipfile)
             with ZipFile(zipfile, "r") as f:
                 f.extractall(cls.basedir())
             os.unlink(zipfile)

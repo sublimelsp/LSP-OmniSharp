@@ -16,12 +16,14 @@ This language server operates on views with the `source.cs` base scope.
 
 ## Installation Location
 
-The server is installed in the $DATA/Package Storage/LSP-OmniSharp directory, where $DATA is the base data path of Sublime Text.
-For instance, $DATA is `~/.config/sublime-text` on a Linux system. If you want to force a re-installation of the server,
-you can delete the entire $DATA/Cache/LSP-OmniSharp directory.
+The server is installed in the $CACHE/Package Storage/LSP-OmniSharp directory, where $DATA is the base cache path of Sublime Text.
+For instance, $CACHE is `~/.cache/sublime-text` on a Linux system. If you want to force a re-installation of the server,
+you can delete the entire $CACHE/Package Storage/LSP-OmniSharp directory.
 
 Like any helper package, installation starts when you open a view that is suitable for this language server. In this
 case, that means that when you open a view with the `source.cs` base scope, installation commences.
+
+Notice: On platforms other than Windows, `dotnet >= 6` needs to be installed
 
 ## Configuration
 
