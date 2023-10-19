@@ -18,19 +18,12 @@ URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnis
 
 def _platform_str() -> str:
     platform = sublime.platform()
-    if platform == "osx":
-        return "osx-x64"
-    elif platform == "windows":
-        if sublime.arch() == "x64":
-            return "win-x64"
-        else:
-            return "win-x86"
-    else:
-        if sublime.arch() == "x64":
-            return "linux-x64"
-        else:
-            return "linux-x86"
-
+    arch = sublime.arch()
+    if platform == "windows":
+        platform = "win"
+    if arch == "x32":
+        arch = "x86"
+    return "{}-{}".format(platform, arch)
 
 class OmniSharp(AbstractPlugin):
     @classmethod
