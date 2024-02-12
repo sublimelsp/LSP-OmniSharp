@@ -73,5 +73,7 @@
         "omnisharp.useEditorFormattingSettings": true,
         // Enable/disable default Razor formatter.
         "razor.format.enable": true,
+        // Default version of the omnisharp server
+        "omnisharp.version": "1.39.11"
     }
 }

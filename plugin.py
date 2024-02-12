@@ -12,24 +12,30 @@ from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
-VERSION = "1.38.2"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
+DEFAULT_VERSION = "1.39.11"
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/{}"  # noqa: E501
 
+OMNISHARP_ARCHIVE = {
+    "windows": {
+        "x64": "omnisharp-win-x64.zip",
+    },
+    "linux": {
+        "x64": "omnisharp-linux-x64-net6.0.zip",
+        "arm64": "omnisharp-linux-arm64-net6.0.zip",
+    },
+    "osx": {
+        "x64": "omnisharp-osx-x64-net6.0.zip",
+        "arm64": "omnisharp-osx-arm64-net6.0.zip",
+    }
+}
 
-def _platform_str() -> str:
+def _omnisharp_archive() -> str:
     platform = sublime.platform()
-    if platform == "osx":
-        return "osx"
-    elif platform == "windows":
-        if sublime.arch() == "x64":
-            return "win-x64"
-        else:
-            return "win-x86"
-    else:
-        if sublime.arch() == "x64":
-            return "linux-x64"
-        else:
-            return "linux-x86"
+    arch = sublime.arch()
+    try:
+        return OMNISHARP_ARCHIVE[platform][arch]
+    except KeyError:
+        raise RuntimeError("{}-{} is not a supported combination.".format(platform, arch))
 
 
 class OmniSharp(AbstractPlugin):
@@ -45,7 +51,13 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def version_str(cls) -> str:
-        return VERSION
+        settings = cls.get_settings().get("settings")
+        version = DEFAULT_VERSION
+        if settings is not None:
+            version = settings.get("omnisharp.version")
+            if version is None:
+                version = DEFAULT_VERSION
+        return version
 
     @classmethod
     def installed_version_str(cls) -> str:
@@ -60,10 +72,11 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def binary_path(cls) -> str:
-        if sublime.platform() == "windows":
+        platform = sublime.platform()
+        if platform == "windows":
             return os.path.join(cls.basedir(), "OmniSharp.exe")
         else:
-            return os.path.join(cls.basedir(), "omnisharp", "OmniSharp.exe")
+            return os.path.join(cls.basedir(), "OmniSharp")
 
     @classmethod
     def get_command(cls) -> List[str]:
@@ -91,12 +104,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_linux_command(cls) -> List[str]:
-        return [
-            cls.mono_bin_path(),
-            "--assembly-loader=strict",
-            "--config",
-            cls.mono_config_path()
-        ] + cls.get_windows_command()
+        return cls.get_windows_command()
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -109,19 +117,25 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def install_or_update(cls) -> None:
+        platform = sublime.platform()
         shutil.rmtree(cls.basedir(), ignore_errors=True)
         os.makedirs(cls.basedir(), exist_ok=True)
         zipfile = os.path.join(cls.basedir(), "omnisharp.zip")
         try:
             version = cls.version_str()
-            urlretrieve(URL.format(version, _platform_str()), zipfile)
+            archive_url = URL.format(version, _omnisharp_archive())
+            print("Fetching: {}".format(archive_url))
+            urlretrieve(archive_url, zipfile)
             with ZipFile(zipfile, "r") as f:
                 f.extractall(cls.basedir())
             os.unlink(zipfile)
-            if sublime.platform() != "windows":
-                os.chmod(cls.mono_bin_path(), 0o744)
+
+            if platform != "windows":
+                os.chmod(cls.binary_path(), 0o744)
+
             with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
                 fp.write(version)
+
         except Exception:
             shutil.rmtree(cls.basedir(), ignore_errors=True)
             raise

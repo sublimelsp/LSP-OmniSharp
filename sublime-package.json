@@ -131,6 +131,11 @@
                       "default": true,
                       "description": "Enable/disable default Razor formatter.",
                       "type": "boolean"
+                    },
+                    "omnisharp.version": {
+                      "default": "1.39.11",
+                      "description": "Specify the OmniSharp-roslyn release version",
+                      "type": "string"
                     }
                   }
                 }
