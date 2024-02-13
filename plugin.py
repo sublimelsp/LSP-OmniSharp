@@ -35,7 +35,8 @@ def _omnisharp_archive() -> str:
     try:
         return OMNISHARP_ARCHIVE[platform][arch]
     except KeyError:
-        raise RuntimeError("{}-{} is not a supported combination.".format(platform, arch))
+        raise RuntimeError(
+            "{}-{} is not currently a supported platform for LSP-OmniSharp.".format(platform, arch))
 
 
 class OmniSharp(AbstractPlugin):
@@ -72,6 +73,11 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def binary_path(cls) -> str:
+        settings = cls.get_settings().get("settings")
+        server_path = settings.get("omnisharp.serverPath")
+        if server_path is not None:
+            return server_path
+
         platform = sublime.platform()
         if platform == "windows":
             return os.path.join(cls.basedir(), "OmniSharp.exe")
@@ -93,14 +99,6 @@ class OmniSharp(AbstractPlugin):
     @classmethod
     def get_osx_command(cls) -> List[str]:
         return cls.get_linux_command()
-
-    @classmethod
-    def mono_bin_path(cls) -> str:
-        return os.path.join(cls.basedir(), "bin", "mono")
-
-    @classmethod
-    def mono_config_path(cls) -> str:
-        return os.path.join(cls.basedir(), "etc", "config")
 
     @classmethod
     def get_linux_command(cls) -> List[str]:

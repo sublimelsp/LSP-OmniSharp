@@ -136,6 +136,11 @@
                       "default": "1.39.11",
                       "description": "Specify the OmniSharp-roslyn release version",
                       "type": "string"
+                    },
+                    "omnisharp.serverPath": {
+                      "default": null,
+                      "description": "A path to a user installed omnisharp binary. Used instead of an automatically downloaded release.",
+                      "type": "string"
                     }
                   }
                 }
