@@ -1,16 +1,22 @@
-from urllib.request import urlretrieve
-from zipfile import ZipFile
+from __future__ import annotations
+
 import os
 import shutil
+import sublime
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from typing import Any, Callable, Optional
+
+from urllib.request import urlretrieve
+from zipfile import ZipFile
 
 from LSP.plugin import AbstractPlugin
 from LSP.plugin import ClientConfig
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin import WorkspaceFolder
-from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
-import sublime
 
 VERSION = "1.39.12"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
@@ -70,7 +76,7 @@ class OmniSharp(AbstractPlugin):
             return os.path.join(cls.basedir(), "omnisharp", "OmniSharp.exe")
 
     @classmethod
-    def get_command(cls) -> List[str]:
+    def get_command(cls) -> list[str]:
         settings = cls.get_settings()
         cmd = settings.get("command")
         if isinstance(cmd, list):
@@ -78,11 +84,11 @@ class OmniSharp(AbstractPlugin):
         return getattr(cls, "get_{}_command".format(sublime.platform()))()
 
     @classmethod
-    def get_windows_command(cls) -> List[str]:
+    def get_windows_command(cls) -> list[str]:
         return [cls.binary_path(), "--languageserver"]
 
     @classmethod
-    def get_osx_command(cls) -> List[str]:
+    def get_osx_command(cls) -> list[str]:
         return cls.get_linux_command()
 
     @classmethod
@@ -94,7 +100,7 @@ class OmniSharp(AbstractPlugin):
         return os.path.join(cls.basedir(), "etc", "config")
 
     @classmethod
-    def get_linux_command(cls) -> List[str]:
+    def get_linux_command(cls) -> list[str]:
         return [
             cls.mono_bin_path(),
             "--assembly-loader=strict",
@@ -135,7 +141,7 @@ class OmniSharp(AbstractPlugin):
         cls,
         window: sublime.Window,
         initiating_view: sublime.View,
-        workspace_folders: List[WorkspaceFolder],
+        workspace_folders: list[WorkspaceFolder],
         configuration: ClientConfig
     ) -> Optional[str]:
         configuration.command = cls.get_command()
@@ -145,7 +151,7 @@ class OmniSharp(AbstractPlugin):
 
     def on_pre_server_command(
         self,
-        command: Mapping[str, Any],
+        command: dict[str, Any],
         done_callback: Callable[[], None]
     ) -> bool:
         name = command["command"]
@@ -153,7 +159,7 @@ class OmniSharp(AbstractPlugin):
             return self._handle_quick_references(command["arguments"], done_callback)
         return False
 
-    def _handle_quick_references(self, arguments: List[Any], done_callback: Callable[[], None]) -> bool:
+    def _handle_quick_references(self, arguments: list[Any], done_callback: Callable[[], None]) -> bool:
         session = self.weaksession()
         if not session:
             return True
