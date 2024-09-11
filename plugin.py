@@ -12,24 +12,28 @@ from LSP.plugin.core.typing import Any, Optional, List, Mapping, Callable
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 import sublime
 
-VERSION = "1.38.2"
+VERSION = "1.39.12"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
 
 
 def _platform_str() -> str:
-    platform = sublime.platform()
-    if platform == "osx":
-        return "osx"
-    elif platform == "windows":
-        if sublime.arch() == "x64":
-            return "win-x64"
-        else:
-            return "win-x86"
-    else:
-        if sublime.arch() == "x64":
-            return "linux-x64"
-        else:
-            return "linux-x86"
+    return {
+        "osx": {
+            "arm64": "osx-arm64-net6.0",
+            "x64": "osx-x64-net6.0",
+            "x32": "osx",
+        },
+        "linux": {
+            "arm64": "linux-arm64-net6.0",
+            "x64": "linux-x64-net6.0",
+            "x32": "linux-x86-net6.0",
+        },
+        "windows": {
+            "arm64": "win-arm64-net6.0",
+            "x64": "win-x64-net6.0",
+            "x32": "win-x86-net6.0",
+        }
+    }[sublime.platform()][sublime.arch()]
 
 
 class OmniSharp(AbstractPlugin):
