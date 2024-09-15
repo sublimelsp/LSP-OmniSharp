@@ -3,3 +3,6 @@ LSP-OmniSharp's underlying language server has been upgraded to v1.39.12.
 See: https://github.com/OmniSharp/omnisharp-roslyn/releases/tag/v1.39.12
 
 This enables support for .NET 6.
+
+If you encounter any problems, you may want to open a new Github issue
+at https://github.com/sublimelsp/LSP-OmniSharp/issues.
