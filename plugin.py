@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import os
 import shutil
 import sublime
+
+from pathlib import Path
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -49,9 +50,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def get_settings(cls) -> sublime.Settings:
-        return sublime.load_settings(
-            "LSP-{}.sublime-settings".format(cls.name())
-        )
+        return sublime.load_settings(f"LSP-{cls.name()}.sublime-settings")
 
     @classmethod
     def version_str(cls) -> str:
@@ -59,21 +58,20 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def installed_version_str(cls) -> str:
-        filename = os.path.join(cls.basedir(), "VERSION")
-        with open(filename, "r") as f:
+        with open(cls.basedir() / "VERSION", "r") as f:
             version = f.readline().strip()
             return version
 
     @classmethod
-    def basedir(cls) -> str:
-        return os.path.join(cls.storage_path(), "LSP-{}".format(cls.name()))
+    def basedir(cls) -> Path:
+        return Path(cls.storage_path()) / f"LSP-{cls.name()}"
 
     @classmethod
-    def binary_path(cls) -> str:
+    def binary_path(cls) -> Path:
         if sublime.platform() == "windows":
-            return os.path.join(cls.basedir(), "OmniSharp.exe")
+            return cls.basedir() / "OmniSharp.exe"
         else:
-            return os.path.join(cls.basedir(), "OmniSharp")
+            return cls.basedir() / "OmniSharp"
 
     @classmethod
     def get_command(cls) -> list[str]:
@@ -81,7 +79,7 @@ class OmniSharp(AbstractPlugin):
         cmd = settings.get("command")
         if isinstance(cmd, list):
             return cmd
-        return [cls.binary_path(), "--languageserver"]
+        return [str(cls.binary_path()), "--languageserver"]
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -94,21 +92,22 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def install_or_update(cls) -> None:
-        shutil.rmtree(cls.basedir(), ignore_errors=True)
-        os.makedirs(cls.basedir(), exist_ok=True)
-        zipfile = os.path.join(cls.basedir(), "omnisharp.zip")
+        basedir = cls.basedir()
+        shutil.rmtree(basedir, ignore_errors=True)
+        basedir.mkdir(parents=True, exist_ok=True)
+        zipfile = basedir / "omnisharp.zip"
         try:
             version = cls.version_str()
             urlretrieve(URL.format(version, _platform_str()), zipfile)
             with ZipFile(zipfile, "r") as f:
-                f.extractall(cls.basedir())
-            os.unlink(zipfile)
+                f.extractall(basedir)
+            zipfile.unlink()
             if sublime.platform() != "windows":
-                os.chmod(cls.binary_path(), 0o744)
-            with open(os.path.join(cls.basedir(), "VERSION"), "w") as fp:
+                cls.binary_path().chmod(0o744)
+            with open(basedir / "VERSION", "w") as fp:
                 fp.write(version)
         except Exception:
-            shutil.rmtree(cls.basedir(), ignore_errors=True)
+            shutil.rmtree(basedir, ignore_errors=True)
             raise
 
     @classmethod
