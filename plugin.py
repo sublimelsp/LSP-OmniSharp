@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import shutil
 import sublime
 
@@ -79,7 +80,12 @@ class OmniSharp(AbstractPlugin):
         cmd = settings.get("command")
         if isinstance(cmd, list):
             return cmd
-        return [str(cls.binary_path()), "--languageserver"]
+        return [
+            str(cls.binary_path()),
+            "--languageserver",
+            "--encoding", "utf-8",
+            "--hostPID", str(os.getpid()),
+        ]
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
