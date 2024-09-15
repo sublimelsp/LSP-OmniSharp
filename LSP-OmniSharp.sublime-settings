@@ -5,24 +5,6 @@
         "FrameworkPathOverride": "${storage_path}/LSP-OmniSharp/.msbuild/Current"
     },
     "settings": {
-        // Enable/disable default C# formatter (requires restart).
-        "csharp.format.enable": true,
-        // Specifies the maximum number of files for which diagnostics are reported for the whole
-        // workspace. If this limit is exceeded, diagnostics will be shown for currently opened
-        // files only. Specify 0 or less to disable the limit completely.
-        "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
-        // Specifies whether the references CodeLens should be shown.
-        "csharp.referencesCodeLens.enabled": true,
-        // Array of custom symbol names for which CodeLens should be disabled.
-        "csharp.referencesCodeLens.filteredSymbols": [],
-        // Enable/disable Semantic Highlighting for C# files (Razor files currently unsupported).
-        // Defaults to true. Close open files for changes to take effect.
-        "csharp.semanticHighlighting.enabled": true,
-        // Suppress 'hidden' diagnostics (such as 'unnecessary using directives') from appearing in
-        // the editor or the Problems pane.
-        "csharp.suppressHiddenDiagnostics": true,
-        // Specifies whether the run and debug test CodeLens should be shown.
-        "csharp.testsCodeLens.enabled": true,
         // The name of the default solution used at start up if the repo has multiple solutions.
         // e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in
         // alphabetical order to be chosen.
