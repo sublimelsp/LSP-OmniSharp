@@ -1,9 +1,5 @@
 {
     "selector": "source.cs | source.cake",
-    "env": {
-        // TODO: Is this necessary on Windows/Linux?
-        "FrameworkPathOverride": "${storage_path}/LSP-OmniSharp/.msbuild/Current"
-    },
     "settings": {
         // The name of the default solution used at start up if the repo has multiple solutions.
         // e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in
