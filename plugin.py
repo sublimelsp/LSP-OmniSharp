@@ -163,9 +163,9 @@ class OmniSharp(AbstractPlugin):
         if session:
             message = fmt.format(*args)
             if sticky:
-                session.set_window_status_async(self.name(), message)
+                session.set_config_status_async(message)
             else:
-                session.erase_window_status_async(self.name())
+                session.set_config_status_async("")
                 session.window.status_message(message)
 
     def m_o__msbuildprojectdiagnostics(self, params: Any) -> None:
