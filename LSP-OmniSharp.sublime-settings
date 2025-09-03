@@ -5,13 +5,6 @@
         // e.g.'MyAwesomeSolution.sln'. Default value is `null` which will cause the first in
         // alphabetical order to be chosen.
         "omnisharp.defaultLaunchSolution": null,
-        // (EXPERIMENTAL) Enables support for resolving completion edits asynchronously. This can
-        // speed up time to show the completion list, particularly override and partial method
-        // completion lists, at the cost of slight delays after inserting a completion item. Most
-        // completion items will have no noticeable impact with this feature, but typing immediately
-        // after inserting an override or partial method completion, before the insert is completed,
-        // can have unpredictable results.
-        "omnisharp.enableAsyncCompletion": false,
         // Enables support for decompiling external references instead of viewing metadata.
         "omnisharp.enableDecompilationSupport": false,
         // Enables support for reading code style, naming convention and analyzer settings from
