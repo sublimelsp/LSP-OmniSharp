@@ -8,16 +8,14 @@ from pathlib import Path
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from typing import Any, Callable, Optional
+    from typing import Any, Callable
 
 from urllib.request import urlretrieve
 from zipfile import ZipFile
 
 from LSP.plugin import AbstractPlugin
-from LSP.plugin import ClientConfig
 from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
-from LSP.plugin import WorkspaceFolder
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 
 VERSION = "1.39.12"
@@ -75,17 +73,11 @@ class OmniSharp(AbstractPlugin):
             return cls.basedir() / "OmniSharp"
 
     @classmethod
-    def get_command(cls) -> list[str]:
-        settings = cls.get_settings()
-        cmd = settings.get("command")
-        if isinstance(cmd, list):
-            return cmd
-        return [
-            str(cls.binary_path()),
-            "--languageserver",
-            "--encoding", "utf-8",
-            "--hostPID", str(os.getpid()),
-        ]
+    def additional_variables(cls) -> dict[str, str] | None:
+        return {
+            'host_pid': str(os.getpid()),
+            'server_binary_path': str(cls.binary_path()),
+        }
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -115,17 +107,6 @@ class OmniSharp(AbstractPlugin):
         except Exception:
             shutil.rmtree(basedir, ignore_errors=True)
             raise
-
-    @classmethod
-    def on_pre_start(
-        cls,
-        window: sublime.Window,
-        initiating_view: sublime.View,
-        workspace_folders: list[WorkspaceFolder],
-        configuration: ClientConfig
-    ) -> Optional[str]:
-        configuration.command = cls.get_command()
-        return None
 
     # -- commands from the server that should be handled client-side ----------
 
@@ -177,7 +158,7 @@ class OmniSharp(AbstractPlugin):
     def m_o__unresolveddependencies(self, params: Any) -> None:
         self._print(False, "{} has unresolved dependencies", params["FileName"])
 
-    def _get_assembly_name(self, params: Any) -> Optional[str]:
+    def _get_assembly_name(self, params: Any) -> str | None:
         project = params.get("MsBuildProject")
         if project:
             assembly_name = project.get("AssemblyName")
