@@ -44,5 +44,11 @@
         "omnisharp.useEditorFormattingSettings": true,
         // Enable/disable default Razor formatter.
         "razor.format.enable": true,
-    }
+    },
+    "command": [
+        "${server_binary_path}",
+        "--languageserver",
+        "--encoding", "utf-8",
+        "--hostPID", "${host_pid}",
+    ]
 }
