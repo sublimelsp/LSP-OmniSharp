@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+from enum import IntEnum
+from pathlib import Path
+from typing import cast
+from typing import TYPE_CHECKING
+import ctypes
 import os
 import shutil
+
 import sublime
 
-from pathlib import Path
-
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from typing import Any, Callable
+    from collections.abc import Callable
+    from typing import Any
 
 from urllib.request import urlretrieve
 from zipfile import ZipFile
@@ -19,7 +23,33 @@ from LSP.plugin import unregister_plugin
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 
 VERSION = "1.39.12"
-URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"  # noqa: E501
+URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
+
+
+class ImageFileMachine(IntEnum):
+    IMAGE_FILE_MACHINE_AMD64 = 0x8664
+    IMAGE_FILE_MACHINE_ARM64 = 0xAA64
+    IMAGE_FILE_MACHINE_I386 = 0x014C
+    IMAGE_FILE_MACHINE_UNKNOWN = 0x0000
+
+MACHINE_NAMES: dict[ImageFileMachine, str] = {
+    ImageFileMachine.IMAGE_FILE_MACHINE_AMD64: "x64",
+    ImageFileMachine.IMAGE_FILE_MACHINE_ARM64: "arm64",
+    ImageFileMachine.IMAGE_FILE_MACHINE_I386: "x32",
+    ImageFileMachine.IMAGE_FILE_MACHINE_UNKNOWN: "x64",
+}
+
+
+def get_host_arch() -> str:
+    if sublime.platform() == "windows":
+        kernel32 = ctypes.windll.kernel32
+        process_machine = ctypes.c_ushort(0)
+        native_machine  = ctypes.c_ushort(0)
+        success = kernel32.IsWow64Process2(
+            kernel32.GetCurrentProcess(), ctypes.byref(process_machine), ctypes.byref(native_machine))
+        if success:
+            return MACHINE_NAMES[cast(ImageFileMachine, native_machine.value)]
+    return sublime.arch()
 
 
 def _platform_str() -> str:
@@ -39,7 +69,7 @@ def _platform_str() -> str:
             "x64": "win-x64-net6.0",
             "x32": "win-x86-net6.0",
         }
-    }[sublime.platform()][sublime.arch()]
+    }[sublime.platform()][get_host_arch()]
 
 
 class OmniSharp(AbstractPlugin):
