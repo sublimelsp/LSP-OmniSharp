@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 import ctypes
 import os
 import shutil
-import sys
 
 import sublime
 
@@ -42,19 +41,15 @@ MACHINE_NAMES: dict[ImageFileMachine, str] = {
 
 
 def get_host_arch() -> str:
-    if sys.platform != "win32":
-        return sublime.arch()
-    kernel32 = ctypes.windll.kernel32
-    process_machine = ctypes.c_ushort(0)
-    native_machine  = ctypes.c_ushort(0)
-    success = kernel32.IsWow64Process2(
-        kernel32.GetCurrentProcess(),
-        ctypes.byref(process_machine),
-        ctypes.byref(native_machine)
-    )
-    if not success:
-        raise ctypes.WinError(ctypes.get_last_error())
-    return MACHINE_NAMES.get(cast(ImageFileMachine, native_machine.value), sublime.arch())
+    if sublime.platform() == "windows":
+        kernel32 = ctypes.windll.kernel32
+        process_machine = ctypes.c_ushort(0)
+        native_machine  = ctypes.c_ushort(0)
+        success = kernel32.IsWow64Process2(
+            kernel32.GetCurrentProcess(), ctypes.byref(process_machine), ctypes.byref(native_machine))
+        if success:
+            return MACHINE_NAMES[cast(ImageFileMachine, native_machine.value)]
+    return sublime.arch()
 
 
 def _platform_str() -> str:
