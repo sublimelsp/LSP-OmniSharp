@@ -22,7 +22,7 @@ from LSP.plugin import register_plugin
 from LSP.plugin import unregister_plugin
 from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
 
-VERSION = "1.39.12"
+VERSION = "1.39.15"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
 
 
