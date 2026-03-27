@@ -2,5 +2,19 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>sublimelsp/renovate-preset"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^plugin\\.py$/"
+      ],
+      "matchStrings": [
+        "VERSION = \"(?<currentValue>.+?)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "v?(?<version>[\\d\\.]*)$",
+      "packageNameTemplate": "OmniSharp/omnisharp-roslyn"
+    }
   ]
 }
