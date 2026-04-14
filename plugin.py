@@ -43,6 +43,8 @@ MACHINE_NAMES: dict[ImageFileMachine, str] = {
 def get_host_arch() -> str:
     if sublime.platform() == "windows":
         kernel32 = ctypes.windll.kernel32
+        c_ushort_p = ctypes.POINTER(ctypes.c_ushort)
+        kernel32.IsWow64Process2.argtypes = (ctypes.c_void_p, c_ushort_p, c_ushort_p)
         process_machine = ctypes.c_ushort(0)
         native_machine  = ctypes.c_ushort(0)
         success = kernel32.IsWow64Process2(
