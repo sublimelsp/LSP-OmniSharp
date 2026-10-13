@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/sublimelsp/lsp_smoke_test/v1/smoke.schema.json
+file: Program.cs
+# The session name until the package is migrated to LspPlugin.
+server: OmniSharp
+# CS1525: Invalid expression term ';'.
+expected_diagnostics:
+  code: CS1525
+# Starting the server includes downloading it.
+diagnostics_timeout: 240
