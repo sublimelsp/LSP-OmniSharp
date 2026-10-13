@@ -11,16 +11,17 @@ import shutil
 import sublime
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
     from typing import Any
 
 from urllib.request import urlretrieve
 from zipfile import ZipFile
 
-from LSP.plugin import AbstractPlugin
-from LSP.plugin import register_plugin
-from LSP.plugin import unregister_plugin
-from LSP.plugin.core.views import range_to_region  # TODO: not public API :(
+from LSP.plugin import command_handler
+from LSP.plugin import LspPlugin
+from LSP.plugin import notification_handler
+from LSP.plugin import OnPreStartContext
+from LSP.plugin import Promise
+from LSP.plugin import range_to_region
 
 VERSION = "1.39.15"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
@@ -74,14 +75,15 @@ def _platform_str() -> str:
     }[sublime.platform()][get_host_arch()]
 
 
-class OmniSharp(AbstractPlugin):
+class OmniSharp(LspPlugin):
     @classmethod
-    def name(cls) -> str:
-        return cls.__name__
-
-    @classmethod
-    def get_settings(cls) -> sublime.Settings:
-        return sublime.load_settings(f"LSP-{cls.name()}.sublime-settings")
+    def on_pre_start_async(cls, context: OnPreStartContext) -> None:
+        if cls.needs_update_or_installation():
+            cls.install_or_update()
+        context.variables.update({
+            'host_pid': str(os.getpid()),
+            'server_binary_path': str(cls.binary_path()),
+        })
 
     @classmethod
     def version_str(cls) -> str:
@@ -89,27 +91,16 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def installed_version_str(cls) -> str:
-        with open(cls.basedir() / "VERSION", "r") as f:
+        with open(cls.plugin_storage_path / "VERSION", "r") as f:
             version = f.readline().strip()
             return version
 
     @classmethod
-    def basedir(cls) -> Path:
-        return Path(cls.storage_path()) / f"LSP-{cls.name()}"
-
-    @classmethod
     def binary_path(cls) -> Path:
         if sublime.platform() == "windows":
-            return cls.basedir() / "OmniSharp.exe"
+            return cls.plugin_storage_path / "OmniSharp.exe"
         else:
-            return cls.basedir() / "OmniSharp"
-
-    @classmethod
-    def additional_variables(cls) -> dict[str, str] | None:
-        return {
-            'host_pid': str(os.getpid()),
-            'server_binary_path': str(cls.binary_path()),
-        }
+            return cls.plugin_storage_path / "OmniSharp"
 
     @classmethod
     def needs_update_or_installation(cls) -> bool:
@@ -122,7 +113,7 @@ class OmniSharp(AbstractPlugin):
 
     @classmethod
     def install_or_update(cls) -> None:
-        basedir = cls.basedir()
+        basedir = cls.plugin_storage_path
         shutil.rmtree(basedir, ignore_errors=True)
         basedir.mkdir(parents=True, exist_ok=True)
         zipfile = basedir / "omnisharp.zip"
@@ -142,32 +133,26 @@ class OmniSharp(AbstractPlugin):
 
     # -- commands from the server that should be handled client-side ----------
 
-    def on_pre_server_command(
-        self,
-        command: dict[str, Any],
-        done_callback: Callable[[], None]
-    ) -> bool:
-        name = command["command"]
-        if name == "omnisharp/client/findReferences":
-            return self._handle_quick_references(command["arguments"], done_callback)
-        return False
+    @command_handler("omnisharp/client/findReferences")
+    def on_find_references(self, arguments: list[Any] | None) -> Promise[None]:
+        if arguments:
+            self._handle_quick_references(arguments)
+        return Promise.resolve(None)
 
-    def _handle_quick_references(self, arguments: list[Any], done_callback: Callable[[], None]) -> bool:
+    def _handle_quick_references(self, arguments: list[Any]) -> None:
         session = self.weaksession()
         if not session:
-            return True
+            return
         sb = session.get_session_buffer_for_uri_async(arguments[0]["uri"])
         if not sb:
-            return True
+            return
         for sv in sb.session_views:
             if not sv.view.is_valid():
                 continue
-            region = range_to_region(arguments[0]["range"], sv.view)
+            region = range_to_region(sv.view, arguments[0]["range"])
             args = {"point": region.a}
             sv.view.run_command("lsp_symbol_references", args)
-            done_callback()
-            return True
-        return True
+            return
 
     # --- custom notification handlers ----------------------------------------
 
@@ -181,13 +166,16 @@ class OmniSharp(AbstractPlugin):
                 session.set_config_status_async("")
                 session.window.status_message(message)
 
-    def m_o__msbuildprojectdiagnostics(self, params: Any) -> None:
+    @notification_handler("o#/msbuildprojectdiagnostics")
+    def on_msbuildprojectdiagnostics(self, params: Any) -> None:
         self._print(True, "Compiled {}", params["FileName"])
 
-    def m_o__projectconfiguration(self, params: Any) -> None:
+    @notification_handler("o#/projectconfiguration")
+    def on_projectconfiguration(self, params: Any) -> None:
         self._print(False, "Project configured")
 
-    def m_o__unresolveddependencies(self, params: Any) -> None:
+    @notification_handler("o#/unresolveddependencies")
+    def on_unresolveddependencies(self, params: Any) -> None:
         self._print(False, "{} has unresolved dependencies", params["FileName"])
 
     def _get_assembly_name(self, params: Any) -> str | None:
@@ -198,20 +186,22 @@ class OmniSharp(AbstractPlugin):
                 return assembly_name
         return None
 
-    def m_o__projectadded(self, params: Any) -> None:
+    @notification_handler("o#/projectadded")
+    def on_projectadded(self, params: Any) -> None:
         assembly_name = self._get_assembly_name(params)
         if assembly_name:
             self._print(False, "Project added: {}", assembly_name)
 
-    def m_o__projectchanged(self, params: Any) -> None:
+    @notification_handler("o#/projectchanged")
+    def on_projectchanged(self, params: Any) -> None:
         assembly_name = self._get_assembly_name(params)
         if assembly_name:
             self._print(False, "Project changed: {}", assembly_name)
 
 
 def plugin_loaded() -> None:
-    register_plugin(OmniSharp)
+    OmniSharp.register()
 
 
 def plugin_unloaded() -> None:
-    unregister_plugin(OmniSharp)
+    OmniSharp.unregister()
