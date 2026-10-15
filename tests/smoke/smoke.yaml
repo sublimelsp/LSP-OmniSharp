@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/sublimelsp/lsp_smoke_test/v1/smoke.schema.json
+file: Program.cs
+# The session name until the package is migrated to LspPlugin.
+server: OmniSharp
+# OmniSharp only reports diagnostics for files that belong to a project, hence smoke.csproj. It works without
+# "dotnet restore"; the missing references cause other errors, which the test ignores.
+# CS1525: Invalid expression term ';'.
+expected_diagnostics:
+  code: CS1525
+# Starting the server includes downloading it.
+diagnostics_timeout: 240
