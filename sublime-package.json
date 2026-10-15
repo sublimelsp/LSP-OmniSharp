@@ -111,7 +111,7 @@
               "properties": {
                 "LSP": {
                   "properties": {
-                    "OmniSharp": {
+                    "LSP-OmniSharp": {
                       "$ref": "sublime://settings/LSP-OmniSharp#/definitions/PluginConfig"
                     }
                   }

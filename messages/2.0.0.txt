@@ -1,0 +1,32 @@
+Breaking changes:
+
+- The key used to override LSP-OmniSharp settings in project settings has changed from `OmniSharp` to `LSP-OmniSharp`.
+  If you use project-specific overrides for LSP-OmniSharp, you have to rename the key for them to apply:
+
+  Before:
+
+  ```jsonc
+  {
+      "settings": {
+          "LSP": {
+              "OmniSharp": {
+                  // ...
+              }
+          }
+      }
+  }
+  ```
+
+  After:
+
+  ```jsonc
+  {
+      "settings": {
+          "LSP": {
+              "LSP-OmniSharp": {
+                  // ...
+              }
+          }
+      }
+  }
+  ```
