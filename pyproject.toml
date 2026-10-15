@@ -10,6 +10,11 @@ typeCheckingMode = "standard"
 line-length = 120
 target-version = "py38"
 
+[tool.ruff.lint]
+# Enable preview rules.
+preview = true
+select = ["F401", "I"]
+
 [tool.ruff.lint.isort]
 case-sensitive = false
 force-single-line = true

@@ -86,10 +86,6 @@ class OmniSharp(LspPlugin):
         })
 
     @classmethod
-    def version_str(cls) -> str:
-        return VERSION
-
-    @classmethod
     def installed_version_str(cls) -> str:
         with open(cls.plugin_storage_path / "VERSION", "r") as f:
             version = f.readline().strip()
@@ -105,7 +101,7 @@ class OmniSharp(LspPlugin):
     @classmethod
     def needs_update_or_installation(cls) -> bool:
         try:
-            if cls.version_str() == cls.installed_version_str():
+            if VERSION == cls.installed_version_str():
                 return False
         except Exception:
             pass
@@ -118,7 +114,7 @@ class OmniSharp(LspPlugin):
         basedir.mkdir(parents=True, exist_ok=True)
         zipfile = basedir / "omnisharp.zip"
         try:
-            version = cls.version_str()
+            version = VERSION
             urlretrieve(URL.format(version, _platform_str()), zipfile)
             with ZipFile(zipfile, "r") as f:
                 f.extractall(basedir)
