@@ -17,6 +17,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       DOTNET_ROLL_FORWARD: Major  # The server is built for .NET 6.
+      # Lets an organization variable choose the LSP ref to test against, see
+      # https://github.com/sublimelsp/lsp_smoke_test#testing-against-an-lsp-branch
+      LSP_SMOKE_TEST_LSP_REF: ${{ vars.LSP_SMOKE_TEST_LSP_REF }}
     steps:
       - uses: actions/checkout@v7
 
