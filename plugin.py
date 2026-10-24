@@ -23,7 +23,7 @@ from LSP.plugin import OnPreStartContext
 from LSP.plugin import Promise
 from LSP.plugin import range_to_region
 
-VERSION = "1.39.15"
+VERSION = "1.40.0"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
 
 
