@@ -23,7 +23,7 @@ from LSP.plugin import OnPreStartContext
 from LSP.plugin import Promise
 from LSP.plugin import range_to_region
 
-VERSION = "1.39.15"
+VERSION = "1.40.0"
 URL = "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v{}/omnisharp-{}.zip"
 
 
@@ -58,21 +58,30 @@ def get_host_arch() -> str:
 def _platform_str() -> str:
     return {
         "osx": {
-            "arm64": "osx-arm64-net6.0",
-            "x64": "osx-x64-net6.0",
+            "arm64": "osx-arm64-net10.0",
+            "x64": "osx-x64-net10.0",
             "x32": "osx",
         },
         "linux": {
-            "arm64": "linux-arm64-net6.0",
-            "x64": "linux-x64-net6.0",
-            "x32": "linux-x86-net6.0",
+            "arm64": "linux-arm64-net10.0",
+            "x64": "linux-x64-net10.0",
+            "x32": "linux-x86",
         },
         "windows": {
-            "arm64": "win-arm64-net6.0",
-            "x64": "win-x64-net6.0",
-            "x32": "win-x86-net6.0",
+            "arm64": "win-arm64-net10.0",
+            "x64": "win-x64-net10.0",
+            "x32": "win-x86-net10.0",
         }
     }[sublime.platform()][get_host_arch()]
+
+
+def _dotnet_root() -> str | None:
+    # The server's executable only looks for .NET in DOTNET_ROOT and the default install location, so point it to the
+    # dotnet on the PATH, which can be installed elsewhere, e.g. in ~/.dotnet by the install script.
+    if os.environ.get("DOTNET_ROOT"):
+        return None
+    dotnet = shutil.which("dotnet")
+    return os.path.dirname(os.path.realpath(dotnet)) if dotnet else None
 
 
 class OmniSharp(LspPlugin):
@@ -84,6 +93,8 @@ class OmniSharp(LspPlugin):
             'host_pid': str(os.getpid()),
             'server_binary_path': str(cls.binary_path()),
         })
+        if dotnet_root := _dotnet_root():
+            context.configuration.env.setdefault("DOTNET_ROOT", dotnet_root)
 
     @classmethod
     def installed_version_str(cls) -> str:

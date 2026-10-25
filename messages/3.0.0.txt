@@ -1,0 +1,4 @@
+Breaking changes:
+
+- OmniSharp is updated to v1.40.0, which requires the .NET SDK 10 or higher.
+  Install it from https://dotnet.microsoft.com/download if you have an older version.
