@@ -16,13 +16,13 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     env:
-      DOTNET_ROLL_FORWARD: Major  # The server is built for .NET 6.
+      DOTNET_ROLL_FORWARD: Major  # The server is built for .NET 10.
     steps:
       - uses: actions/checkout@v7
 
       - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - uses: sublimelsp/lsp_smoke_test@v1
 

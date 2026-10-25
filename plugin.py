@@ -58,19 +58,19 @@ def get_host_arch() -> str:
 def _platform_str() -> str:
     return {
         "osx": {
-            "arm64": "osx-arm64-net6.0",
-            "x64": "osx-x64-net6.0",
+            "arm64": "osx-arm64-net10.0",
+            "x64": "osx-x64-net10.0",
             "x32": "osx",
         },
         "linux": {
-            "arm64": "linux-arm64-net6.0",
-            "x64": "linux-x64-net6.0",
-            "x32": "linux-x86-net6.0",
+            "arm64": "linux-arm64-net10.0",
+            "x64": "linux-x64-net10.0",
+            "x32": "linux-x86",
         },
         "windows": {
-            "arm64": "win-arm64-net6.0",
-            "x64": "win-x64-net6.0",
-            "x32": "win-x86-net6.0",
+            "arm64": "win-arm64-net10.0",
+            "x64": "win-x64-net10.0",
+            "x32": "win-x86-net10.0",
         }
     }[sublime.platform()][get_host_arch()]
 
