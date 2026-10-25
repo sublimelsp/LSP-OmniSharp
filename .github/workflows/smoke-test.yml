@@ -15,15 +15,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      DOTNET_ROLL_FORWARD: Major  # The server is built for .NET 10.
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: '10.0.x'
-
+      # Uses the .NET 10 SDK that the runner images include.
       - uses: sublimelsp/lsp_smoke_test@v1
 
   # A single check whose name doesn't depend on the os matrix, for rulesets to require. It runs even when the workflow
