@@ -75,6 +75,15 @@ def _platform_str() -> str:
     }[sublime.platform()][get_host_arch()]
 
 
+def _dotnet_root() -> str | None:
+    # The server's executable only looks for .NET in DOTNET_ROOT and the default install location, so point it to the
+    # dotnet on the PATH, which can be installed elsewhere, e.g. in ~/.dotnet by the install script.
+    if os.environ.get("DOTNET_ROOT"):
+        return None
+    dotnet = shutil.which("dotnet")
+    return os.path.dirname(os.path.realpath(dotnet)) if dotnet else None
+
+
 class OmniSharp(LspPlugin):
     @classmethod
     def on_pre_start_async(cls, context: OnPreStartContext) -> None:
@@ -84,6 +93,8 @@ class OmniSharp(LspPlugin):
             'host_pid': str(os.getpid()),
             'server_binary_path': str(cls.binary_path()),
         })
+        if dotnet_root := _dotnet_root():
+            context.configuration.env.setdefault("DOTNET_ROOT", dotnet_root)
 
     @classmethod
     def installed_version_str(cls) -> str:
